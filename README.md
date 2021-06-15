@@ -1,2 +1,2 @@
-# dual_pol_descriptors
+# Dual-polarimetric descriptors
  
