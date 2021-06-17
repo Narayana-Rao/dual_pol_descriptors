@@ -10,7 +10,7 @@
 </p>
 
 
-Google Earth Engine code: https://code.earthengine.google.com/f4d9274229156c89b2ecbe9eca5d6b9d
+Google Earth Engine code: https://code.earthengine.google.com/3a192f9be8cd79521daa9e42b434ccff
 
 Google Earth Engine App URL:  https://bnarayanarao.users.earthengine.app/view/dpgrd  
 
