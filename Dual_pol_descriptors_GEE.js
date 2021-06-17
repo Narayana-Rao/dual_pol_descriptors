@@ -159,12 +159,11 @@ var m = newS1col.map(function(image) {
     
     
     //Masked values
-    m=m.multiply(vmask).multiply(C11_rc).expression('b(0)==0?-9999:b(0)');
-    H=H.multiply(vmask).multiply(C11_rc).expression('b(0)==0?-9999:b(0)');
-    theta_c=theta_c.multiply(vmask).multiply(C11_rc).expression('b(0)==0?-9999:b(0)');
-    out_rc=out_rc.multiply(vmask).multiply(C11_rc).expression('b(0)==0?-9999:b(0)');
-    ratio=ratio.multiply(vmask).multiply(C11_rc).expression('b(0)==0?-9999:b(0)');
-    
+    m = (m.updateMask(vmask)).updateMask(C11_rc);
+    H=(H.updateMask(vmask)).updateMask(C11_rc);
+    theta_c=(theta_c.updateMask(vmask)).updateMask(C11_rc);
+    out_rc=(out_rc.updateMask(vmask)).updateMask(C11_rc);
+    ratio=(ratio.updateMask(vmask)).updateMask(C11_rc);
 
     var out_raster = H.addBands([theta_c.select('constant_mean'),
                                 m.select('constant_mean'),
