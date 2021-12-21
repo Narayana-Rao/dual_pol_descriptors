@@ -1,6 +1,6 @@
 # Dual-polarimetric descriptors
  
-[![DOI](https://zenodo.org/badge/205995601.svg)](https://zenodo.org/badge/latestdoi/205995601)
+[![DOI](https://zenodo.org/badge/376702145.svg)](https://zenodo.org/badge/latestdoi/376702145)
 [![License: GPL 3.0](https://img.shields.io/badge/License-GPL_3.0-green.svg)](https://opensource.org/licenses/gpl-license)
 [![Open Source Love svg1](https://badges.frapsoft.com/os/v1/open-source.svg?v=103)](https://github.com/ellerbrock/open-source-badges/)
 [![GitHub release](https://img.shields.io/github/release/Narayana-Rao/dual_pol_descriptors.svg)](https://github.com/Narayana-Rao/dual_pol_descriptors/releases)
