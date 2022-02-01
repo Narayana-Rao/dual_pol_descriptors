@@ -19,7 +19,7 @@ IIT Bombay, India.
 email: bnarayanarao@iitb.ac.in
 web: https://narayana-rao.github.io/profile
 
-A detailed explanation of the implemented algorithm can be found in the following article.
+A detailed explanation of the implemented algorithm can be found in the following articles.
 
 Narayanarao Bhogapurapu, Subhadip Dey, Avik Bhattacharya, Dipankar Mandal, 
 Juan Lopez-Sanchez, Heather McNairn, Carlos Lopez-Martinez and Y. S. Rao 2021
@@ -27,6 +27,11 @@ Juan Lopez-Sanchez, Heather McNairn, Carlos Lopez-Martinez and Y. S. Rao 2021
 ISPRS Journal of Photogrammetry and Remote Sensing. 20-35, 178. 
 doi: 10.1016/j.isprsjprs.2021.05.013
 
+Narayanarao Bhogapurapu, Subhadip Dey, Dipankar Mandal, Avik Bhattacharya, 
+L. Karthikeyan, Heather McNairn and Y. S. Rao 2022
+“Soil Moisture Retrieval Over Croplands Using dual-pol L-band GRD SAR Data”. 
+Remote Sensing of Environment. Volume 271, 2022, Pages 112900, ISSN 0034-4257 
+doi: 10.1016/j.rse.2022.112900
 -------------------------------------------------------------------------------------------------------*/
 
 
@@ -148,6 +153,11 @@ var m = newS1col.map(function(image) {
     var Hp1 = p1.multiply(p1.log10()).divide(cnst.log10()).multiply(-1);
     var Hp2 = p2.multiply(p2.log10()).divide(cnst.log10()).multiply(-1);
     var H = Hp1.add(Hp2);
+    var q = ratio;
+    var DpRVIc_n = q.multiply(q.add(ee.Number(3)));
+    var DpRVIc_d = (q.add(ee.Number(1))).multiply(q.add(ee.Number(1)));
+    var DpRVIc = DpRVIc_n.divide(DpRVIc_d);
+
 
     var H_rc = H.expression('b(0) >0 && b(0)<0.3 ? 1 : b(0) > 0.3 && b(0) <0.5? 2 : b(0)>0.5&&b(0) < 0.7  ? 3 :b(0)>0.7 && b(0)<1.0 ? 4: 0');
     var theta_c_rc = theta_c.expression('b(0)>0.0 && b(0) <15 ? 5 :  b(0)>15 &&  b(0)<30 ? 6 : b(0)>30 && b(0) < 45? 7 : 0');
@@ -162,20 +172,23 @@ var m = newS1col.map(function(image) {
     m = (m.updateMask(vmask)).updateMask(C11_rc);
     H=(H.updateMask(vmask)).updateMask(C11_rc);
     theta_c=(theta_c.updateMask(vmask)).updateMask(C11_rc);
+    DpRVIc=(DpRVIc.updateMask(vmask)).updateMask(C11_rc);
     out_rc=(out_rc.updateMask(vmask)).updateMask(C11_rc);
     ratio=(ratio.updateMask(vmask)).updateMask(C11_rc);
 
     var out_raster = H.addBands([theta_c.select('constant_mean'),
                                 m.select('constant_mean'),
+                                
                                 out_rc.select('constant').toDouble(),
                                 ratio.select('constant_mean'),
                                 C11_mean.select('constant_mean'),
                                 C22_mean.select('constant_mean'),
+                                DpRVIc.select('constant_mean'),
                                 image.select('angle')]);
 
     out_raster = out_raster.select(
-        ['constant_mean', 'constant_mean_1','constant_mean_1_1','constant','constant_mean_2','constant_mean_3','constant_mean_4','angle'], // old names
-        ['Hc', 'Theta_c','mc','class','ratio','VV','VH','inc']             
+        ['constant_mean', 'constant_mean_1','constant_mean_1_1','constant','constant_mean_2','constant_mean_3','constant_mean_4','constant_mean_5','angle'], // old names
+        ['Hc', 'Theta_c','mc','class','ratio','VV','VH','DpRVIc','inc']             
         );
     return out_raster.set('system:time_start', image.get('system:time_start'));
 
@@ -192,7 +205,7 @@ Map.centerObject(extent,15);
 Map.addLayer(ee.Image(m.select('Hc').first()),{min:0,max:1,palette:jet_cmap},'Hc');
 Map.addLayer(ee.Image(m.select('mc').first()),{min:0,max:1,palette:jet_cmap},'mc');
 Map.addLayer(ee.Image(m.select('Theta_c').first()),{min:0,max:45,palette:jet_cmap},'Theta_c');
-
+Map.addLayer(ee.Image(m.select('DpRVIc').first()),{min:0,max:1,palette:jet_cmap},'DpRVIc');
 
 /*----------------------------------------------------------------------------------------------
 
@@ -201,7 +214,7 @@ Map.addLayer(ee.Image(m.select('Theta_c').first()),{min:0,max:45,palette:jet_cma
 ----------------------------------------------------------------------------------------------*/
 
 
-var bandcol = ee.List(['Hc','Theta_c','mc','class','ratio','VV','VH','inc']); 
+var bandcol = ee.List(['Hc','Theta_c','mc','DpRVIc','class','ratio','VV','VH','inc']); 
 var bandsize = bandcol.size().getInfo();
 for (var i = 0; i < bandsize; i++) {
 var band = ee.String(bandcol.get(i));
@@ -305,7 +318,10 @@ var ExportCol = function(col, folder, scale, type,
     }
   }
 
-ExportCol(m, 'dpgrd_out', 30,"double",100,1e12,extent) //Exporting all the avaialble scenes and corresponding descriptors in tiff format. 
+//Uncomment the below line to export all the avaialble scenes and corresponding descriptors in the Geotiff format. 
+
+// ExportCol(m, 'dpgrd_out', 30,"double",100,1e12,extent) 
+
 
 /*----------------------------------------------------------------------------------------------
 
