@@ -17,7 +17,7 @@ Narayana Rao B.
 206-MRSLab, CSRE,
 IIT Bombay, India.
 email: bnarayanarao@iitb.ac.in
-web: https://narayana-rao.github.io/profile
+web: https://narayana-rao.github.io
 
 A detailed explanation of the implemented algorithm can be found in the following articles.
 
